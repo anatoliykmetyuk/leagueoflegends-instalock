@@ -29,6 +29,6 @@ class Bot {
   def color(pos: Delta) = {
     val target  = new Rectangle(pos.x, pos.y, 1, 1)
     val capture = bot.createScreenCapture(target)
-    capture.getRGB(0, 0)
+    Color(capture.getRGB(0, 0))
   }
 }

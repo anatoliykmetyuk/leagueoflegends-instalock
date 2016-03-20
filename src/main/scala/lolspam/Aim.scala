@@ -35,3 +35,10 @@ object Delta {
     }
   }
 }
+
+case class Color(raw: Int) {
+  def a = (raw & 0xff000000) >> 24
+  def r = (raw & 0x00ff0000) >> 16
+  def g = (raw & 0x0000ff00) >> 8
+  def b = (raw & 0x000000ff)
+}
