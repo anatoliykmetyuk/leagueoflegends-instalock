@@ -11,9 +11,10 @@ import subscript.swing.Scripts._
 import scala.swing._
 import scala.swing.BorderPanel.Position._
 
+import Utils._
 
 
-class AimFrame extends Frame with FrameProcess {
+class AimFrame extends Frame with FrameProcess with LockFrameTrait {
 
   title = "LoL Instalock Aim"
   location = new Point(400, 300)
@@ -25,7 +26,7 @@ class AimFrame extends Frame with FrameProcess {
   var lock  : Option[Delta] = None
 
   def delta(d: Option[Delta], pivot: Delta = anchor.get): Delta = d.get - pivot
-  def aim() = Aim(delta(champ), delta(chat), delta(lock))
+  def aim = Aim(delta(champ), delta(chat), delta(lock))
 
   val saveBtn = new Button("Save") {enabled = false}
 
@@ -48,9 +49,6 @@ class AimFrame extends Frame with FrameProcess {
   anchorLbl.requestFocus
   listenTo(anchorLbl.keys)
   
-  implicit script..
-     key(??c: Char     ) =  key2: this, ??c
-
   script..
     live = controls... / saveBtn save
 
@@ -59,18 +57,7 @@ class AimFrame extends Frame with FrameProcess {
       'c' capture(d => champ  = Some(d), champLbl )
       'h' capture(d => chat   = Some(d), chatLbl  )
       'l' capture(d => lock   = Some(d), lockLbl  )
-    
-    capture(f: Delta => Unit, lbl: Label) =
-      pointer ~~(d: Delta)~~> [
-        f(d)
-        let lbl.text = d.serialize
-      ]
 
-    pointer = {!
-      val pos = java.awt.MouseInfo.getPointerInfo().getLocation()
-      Delta(pos.x, pos.y)
-    !}
-
-    save = println(s"Saved ${aim().serialize}")
+    save = writeTarget: aim
 
 }

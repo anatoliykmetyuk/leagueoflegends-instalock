@@ -3,6 +3,12 @@ package lolspam
 case class Aim(champ: Delta, chat: Delta, lock: Delta) {
   def serialize: String =
     s"${champ.serialize};${chat.serialize};${lock.serialize}"
+
+  def anchor(a: Delta) = copy(
+    champ = a + champ
+  , chat  = a + chat
+  , lock  = a + lock
+  )
 }
 
 object Aim {

@@ -13,39 +13,52 @@ import scala.swing.BorderPanel.Position._
 
 
 
-class ButtonFrame(var aim: Option[Aim] = None) extends Frame with FrameProcess {
+class ButtonFrame(aim: Aim) extends Frame with FrameProcess with LockFrameTrait {
+
+  lazy val bot = new Bot
 
   var frame: Option[Delta] = None
+  def anchoredAim = aim.anchor(frame.get)
 
   title = "LoL Instalock"
   location = new Point(300, 300)
   resizable = false
 
   val lockBtn = new Button("Lock") {enabled = false}
-  val aimBtn  = new Button("Aim" ) {enabled = false}
 
-  val aimedLbl      = new Label
   val frameFoundLbl = new Label
 
-
-  val controlPanel = new GridPanel(1, 2) {contents ++= Seq(
-    lockBtn, aimBtn
-  )}
-
-  val mainPanel = new GridPanel(3, 1) {contents ++= Seq(
-    aimedLbl, frameFoundLbl, controlPanel
+  val mainPanel = new GridPanel(2, 1) {contents ++= Seq(
+    frameFoundLbl, lockBtn
   )}
 
   contents = mainPanel
+  
+  frameFoundLbl.focusable = true
+  frameFoundLbl.requestFocus
+  listenTo(frameFoundLbl.keys)
 
 
   script..
     live =
-      if !aim.isDefined   then let aimedLbl.text = "NOT AIMED" else let aimedLbl.text = "Aimed"
-      if !frame.isDefined then let frameFoundLbl.text = "FRAME NOT SET" else let frameFoundLbl.text = "Frame set"
-      controls
-      ...
+      if !frame.isDefined then let frameFoundLbl.text = "A - SET FRAME" else let frameFoundLbl.text = "Frame set"
+      controls...
+      
+    controls =;+
+      'a' capture(d => frame = Some(d), frameFoundLbl)
+      lockBtn lock
 
-    controls = {..}
+    lock =
+      // Lock the lane in the chat
+      bot.move(anchoredAim.chat)
+      bot.click();bot.click()  // Focus on the window, then on the chat
+      bot.paste()
+      bot.enter()
 
+      // Lock the champion
+      bot.move(anchoredAim.champ)
+      bot.click()
+
+      // bot.move(anchoredAim.lock)
+      // bot.click()
 }
