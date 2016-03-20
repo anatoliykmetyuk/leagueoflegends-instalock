@@ -72,7 +72,7 @@ class ButtonFrame(aim: Aim) extends Frame with FrameProcess with LockFrameTrait 
       selectLane
       selectChampion
       times: 3 selectLane sleep: 100  // To make sure
-      lockChampion
+      // lockChampion
       bot.move: ptr  // Restore the pointer
 
     selectLane =
