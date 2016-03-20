@@ -16,7 +16,7 @@ trait LockFrameTrait {this: Frame =>
     val pos = java.awt.MouseInfo.getPointerInfo().getLocation()
     Delta(pos.x, pos.y)
   }
-
+  
   implicit script..
      key(??c: Char) = key2: this, ??c
 
